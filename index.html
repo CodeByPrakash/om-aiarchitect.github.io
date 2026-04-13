@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High-End AI System Designer — Requirements Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #050810;
+    --surface: #0c1220;
+    --border: #1a2540;
+    --accent1: #00f5c8;
+    --accent2: #7b5ea7;
+    --accent3: #f5a623;
+    --accent4: #e05c7a;
+    --text: #d4dff0;
+    --dim: #5a6a8a;
+    --glow1: rgba(0,245,200,0.08);
+    --glow2: rgba(123,94,167,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* HEADER */
+  .hero {
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 36px;
+  }
+
+  .label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent1);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: #fff;
+    letter-spacing: -1.5px;
+  }
+
+  h1 span { color: var(--accent1); }
+
+  .subtitle {
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--dim);
+    max-width: 600px;
+    line-height: 1.8;
+  }
+
+  .tier-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 4px 12px;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .badge-green { background: rgba(0,245,200,0.12); color: var(--accent1); border: 1px solid rgba(0,245,200,0.25); }
+  .badge-purple { background: rgba(123,94,167,0.15); color: #b39fd4; border: 1px solid rgba(123,94,167,0.3); }
+  .badge-orange { background: rgba(245,166,35,0.12); color: var(--accent3); border: 1px solid rgba(245,166,35,0.25); }
+  .badge-red { background: rgba(224,92,122,0.12); color: var(--accent4); border: 1px solid rgba(224,92,122,0.25); }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* GRID LAYOUTS */
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .card.c-green::before { background: var(--accent1); box-shadow: 0 0 12px var(--accent1); }
+  .card.c-purple::before { background: var(--accent2); box-shadow: 0 0 12px var(--accent2); }
+  .card.c-orange::before { background: var(--accent3); box-shadow: 0 0 12px var(--accent3); }
+  .card.c-red::before { background: var(--accent4); box-shadow: 0 0 12px var(--accent4); }
+
+  .card:hover.c-green { border-color: rgba(0,245,200,0.3); background: rgba(0,245,200,0.04); }
+  .card:hover.c-purple { border-color: rgba(123,94,167,0.35); background: rgba(123,94,167,0.04); }
+  .card:hover.c-orange { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.04); }
+  .card:hover.c-red { border-color: rgba(224,92,122,0.3); background: rgba(224,92,122,0.04); }
+
+  .card-icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: 0.2px;
+  }
+
+  .card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card ul li {
+    font-size: 11px;
+    color: var(--dim);
+    line-height: 1.5;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .card ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent1);
+  }
+
+  .card.c-purple ul li::before { color: #b39fd4; }
+  .card.c-orange ul li::before { color: var(--accent3); }
+  .card.c-red ul li::before { color: var(--accent4); }
+
+  .card ul li strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* DEPTH TAGS */
+  .depth {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .depth-core { background: rgba(0,245,200,0.1); color: var(--accent1); }
+  .depth-deep { background: rgba(123,94,167,0.15); color: #b39fd4; }
+  .depth-hard { background: rgba(224,92,122,0.12); color: var(--accent4); }
+  .depth-mastery { background: rgba(245,166,35,0.12); color: var(--accent3); }
+
+  /* MATRIX TABLE */
+  .matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  .matrix th {
+    text-align: left;
+    padding: 8px 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dim);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+
+  .matrix td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(26,37,64,0.5);
+    color: var(--dim);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .matrix td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    white-space: nowrap;
+    width: 25%;
+  }
+
+  .matrix tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .matrix-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* LEVEL METER */
+  .level-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .dots {
+    display: flex;
+    gap: 3px;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .dot.on { background: var(--accent1); box-shadow: 0 0 5px var(--accent1); }
+  .dot.on-p { background: var(--accent2); box-shadow: 0 0 5px var(--accent2); }
+  .dot.on-o { background: var(--accent3); box-shadow: 0 0 5px var(--accent3); }
+  .dot.on-r { background: var(--accent4); box-shadow: 0 0 5px var(--accent4); }
+
+  /* CALLOUT */
+  .callout {
+    background: rgba(0,245,200,0.04);
+    border: 1px solid rgba(0,245,200,0.15);
+    border-left: 3px solid var(--accent1);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 11px;
+    color: var(--dim);
+    line-height: 1.8;
+    margin-top: 6px;
+  }
+
+  .callout strong { color: var(--accent1); }
+
+  /* PRIORITY STACK */
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stack-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 18px;
+  }
+
+  .stack-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--border);
+    min-width: 32px;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .stack-content .stack-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .stack-content .stack-desc {
+    font-size: 11px;
+    color: var(--dim);
+    line-height: 1.7;
+  }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    margin-top: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 14px;
+  }
+
+  .footer-left {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+
+  .footer-right {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    text-align: right;
+  }
+
+  /* Animate in */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeUp 0.5s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.12s; }
+  .section:nth-child(3) { animation-delay: 0.18s; }
+  .section:nth-child(4) { animation-delay: 0.24s; }
+  .section:nth-child(5) { animation-delay: 0.30s; }
+  .section:nth-child(6) { animation-delay: 0.36s; }
+  .section:nth-child(7) { animation-delay: 0.42s; }
+  .section:nth-child(8) { animation-delay: 0.48s; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="label">// Deep Technical Roadmap — 2025–2030</div>
+    <h1>High-End <span>AI System</span><br>Designer & Developer</h1>
+    <p class="subtitle">Not the surface-level "ML Engineer" path. This is the architecture behind the architecture — what separates someone who uses AI systems from someone who builds and designs them at depth.</p>
+    <div class="tier-badges">
+      <span class="badge badge-green">DSA & Systems</span>
+      <span class="badge badge-purple">Mathematics</span>
+      <span class="badge badge-orange">Physics</span>
+      <span class="badge badge-red">AI Architecture</span>
+    </div>
+  </div>
+
+  <!-- 01: CORE PROGRAMMING & SYSTEMS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">Core Programming & Systems Foundation</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="grid-3">
+      <div class="card c-green">
+        <div class="card-icon">⚙️</div>
+        <div class="depth depth-core">Core</div>
+        <div class="card-title">Languages (Non-negotiable)</div>
+        <ul>
+          <li><strong>Python</strong> — research, prototyping, PyTorch/JAX</li>
+          <li><strong>C++ (17/20)</strong> — inference engines, CUDA kernels</li>
+          <li><strong>CUDA / HIP</strong> — GPU-level parallelism</li>
+          <li><strong>Rust</strong> — safe systems, inference runtimes</li>
+          <li><strong>Triton</strong> — custom GPU kernel DSL</li>
+        </ul>
+      </div>
+      <div class="card c-green">
+        <div class="card-icon">🧱</div>
+        <div class="depth depth-deep">Deep</div>
+        <div class="card-title">Systems Programming</div>
+        <ul>
+          <li>Memory management — heap/stack, arena allocators</li>
+          <li>CPU cache hierarchy — L1/L2/L3, cache miss impact</li>
+          <li>SIMD intrinsics (AVX-512, NEON)</li>
+          <li>Concurrency — threads, mutexes, lock-free data structures</li>
+          <li>OS scheduling — process/thread affinity</li>
+        </ul>
+      </div>
+      <div class="card c-green">
+        <div class="card-icon">🔌</div>
+        <div class="depth depth-hard">Hard</div>
+        <div class="card-title">Hardware Abstraction</div>
+        <ul>
+          <li>PCIe bus bandwidth & NVLink topology</li>
+          <li>HBM vs GDDR — memory bandwidth implications</li>
+          <li>TensorCores — mixed precision (BF16, FP8, INT8)</li>
+          <li>NCCL — collective communication (AllReduce, AllGather)</li>
+          <li>Compiler IR — LLVM, MLIR basics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02: DSA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Data Structures & Algorithms (AI-Specific Depth)</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="grid-2">
+      <div class="card c-purple">
+        <div class="card-icon">🌲</div>
+        <div class="depth depth-core">Core DSA</div>
+        <div class="card-title">Foundational Structures</div>
+        <ul>
+          <li><strong>Arrays, Heaps, Hash Maps</strong> — used in beam search, priority queues for decoding</li>
+          <li><strong>Trees</strong> — decision trees, syntax trees, MCTS for RL</li>
+          <li><strong>Graphs</strong> — computation graphs (DAGs), GNNs, knowledge graphs</li>
+          <li><strong>Tries</strong> — token vocabulary lookup, BPE tokenizer internals</li>
+          <li><strong>Segment Trees / Fenwick Trees</strong> — efficient sequence ops in custom attention</li>
+        </ul>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">📊</div>
+        <div class="depth depth-deep">Advanced Algos</div>
+        <div class="card-title">AI-Critical Algorithms</div>
+        <ul>
+          <li><strong>Dynamic Programming</strong> — CTC loss, Viterbi decoding, sequence alignment</li>
+          <li><strong>Greedy / Beam Search</strong> — LLM decoding strategies</li>
+          <li><strong>Graph Search</strong> — BFS/DFS for neural architecture search</li>
+          <li><strong>Sorting & Topological sort</strong> — execution order in computation graphs</li>
+          <li><strong>Approximation Algos</strong> — ANN search (HNSW, IVF-PQ for vector DBs)</li>
+        </ul>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">🚀</div>
+        <div class="depth depth-hard">Performance</div>
+        <div class="card-title">Complexity & Optimization</div>
+        <ul>
+          <li>Time/Space complexity — critical for scaling from 1M to 1T parameters</li>
+          <li>Memory-efficient algorithms — gradient checkpointing patterns</li>
+          <li>Cache-oblivious algorithms — tiling matrix multiplications (GEMM)</li>
+          <li>Amortized analysis — for dynamic batching systems</li>
+          <li>Randomized algos — reservoir sampling, sketching (for LLM fine-tuning)</li>
+        </ul>
+      </div>
+      <div class="card c-purple">
+        <div class="card-icon">⚡</div>
+        <div class="depth depth-mastery">Mastery</div>
+        <div class="card-title">Distributed & Parallel DSA</div>
+        <ul>
+          <li>MapReduce patterns — large-scale data pipelines</li>
+          <li>Consistent hashing — model sharding & load balancing</li>
+          <li>CRDT data structures — distributed training coordination</li>
+          <li>Lock-free queues — high-throughput inference servers</li>
+          <li>Merkle trees — model versioning & reproducibility</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03: MATHEMATICS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Mathematics — The Actual Depth Required</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <tr>
+          <th>Domain</th>
+          <th>Specific Topics</th>
+          <th>Why It Matters in AI</th>
+          <th>Depth Required</th>
+        </tr>
+        <tr>
+          <td>Linear Algebra</td>
+          <td>SVD, eigendecomposition, tensor contractions, low-rank approximations, Kronecker products</td>
+          <td>Weight matrices, attention, LoRA, PCA for embeddings, Mamba SSMs</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Multivariable Calculus</td>
+          <td>Jacobians, Hessians, chain rule (autograd), directional derivatives, implicit differentiation</td>
+          <td>Backpropagation, second-order optimizers (Shampoo, K-FAC), gradient flows</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Probability & Statistics</td>
+          <td>Bayesian inference, MLE/MAP, conjugate priors, information theory (KL, entropy, MI)</td>
+          <td>RLHF, variational inference (VAEs), uncertainty quantification, reward modeling</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Optimization Theory</td>
+          <td>Convexity, Lagrangians, KKT conditions, saddle point problems, constrained optimization</td>
+          <td>Training stability, GAN dynamics, constrained RL (safe AI), RLHF reward shaping</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Differential Geometry</td>
+          <td>Manifolds, Riemannian metrics, geodesics, Lie groups</td>
+          <td>Natural gradient descent, geometry of neural network loss landscapes, normalizing flows</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Measure Theory</td>
+          <td>Sigma algebras, Lebesgue integration, martingales, stochastic processes</td>
+          <td>Rigorous probability foundations, diffusion model theory, Markov chains for RL</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Numerical Methods</td>
+          <td>Floating-point arithmetic, iterative solvers, numerical stability, quadrature</td>
+          <td>Avoiding NaN/Inf in deep nets, mixed-precision training, KV-cache quantization</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Information Theory</td>
+          <td>Shannon entropy, KL divergence, mutual information, coding theory (Huffman, ANS)</td>
+          <td>Loss function design, compression, tokenization (BPE uses entropy), diffusion score functions</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Graph Theory</td>
+          <td>Spectral graph theory, random walks, graph Laplacian</td>
+          <td>GNNs, molecular property prediction, knowledge graph embeddings</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>Abstract Algebra</td>
+          <td>Group theory, ring theory, Fourier analysis on groups</td>
+          <td>Equivariant networks (symmetry in physics AI), harmonic analysis for sequence models</td>
+          <td>
+            <div class="level-bar"><div class="dots"><div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="callout" style="margin-top:14px;">
+      <strong>Key insight:</strong> Most "ML engineers" stop at calculus + linear algebra. High-end AI system designers add optimization theory, information theory, and at least exposure to differential geometry. The gap is stochastic processes and measure theory for those building diffusion models, RLHF pipelines, or custom training algorithms from scratch.
+    </div>
+  </div>
+
+  <!-- 04: PHYSICS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">Physics — Why It Actually Matters</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="grid-3">
+      <div class="card c-orange">
+        <div class="card-icon">🔥</div>
+        <div class="depth depth-core">Thermodynamics</div>
+        <div class="card-title">Statistical Mechanics</div>
+        <ul>
+          <li>Boltzmann distribution → softmax is literally this</li>
+          <li>Entropy, free energy → connection to diffusion models & score functions</li>
+          <li>Phase transitions → understand loss landscape "phase changes" in LLMs</li>
+          <li>Annealing → simulated annealing for hyperparameter search origins</li>
+        </ul>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">🌊</div>
+        <div class="depth depth-deep">Signal Theory</div>
+        <div class="card-title">Waves & Fourier</div>
+        <ul>
+          <li>Fourier Transform → positional encodings, frequency analysis in transformers</li>
+          <li>Convolutions — signal processing basis of CNNs</li>
+          <li>Nyquist sampling — audio/image tokenization rates</li>
+          <li>Wavelet transforms — multi-scale feature extraction</li>
+        </ul>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">⚛️</div>
+        <div class="depth depth-hard">Quantum Concepts</div>
+        <div class="card-title">Quantum ML (Emerging)</div>
+        <ul>
+          <li>Quantum superposition → parallel state exploration ideas</li>
+          <li>Quantum annealing → D-Wave hardware for optimization</li>
+          <li>Tensor network methods → MPS, DMRG for efficient LLM compression</li>
+          <li>Hilbert spaces → foundations of kernel methods</li>
+        </ul>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">🔬</div>
+        <div class="depth depth-mastery">Electromagnetism</div>
+        <div class="card-title">Hardware Intuition</div>
+        <ul>
+          <li>Maxwell's equations → electromagnetic interference in chip design</li>
+          <li>RC circuits → analog of gating mechanisms (LSTM gates)</li>
+          <li>Power dissipation — thermal design for GPU compute clusters</li>
+          <li>Noise models — quantization noise in neural nets</li>
+        </ul>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">🌀</div>
+        <div class="depth depth-deep">Dynamical Systems</div>
+        <div class="card-title">ODEs / Control Theory</div>
+        <ul>
+          <li>ODE solvers → Neural ODEs, continuous-depth models</li>
+          <li>Lyapunov stability → training stability guarantees</li>
+          <li>Control theory → RL policy gradient connections</li>
+          <li>Chaos / attractors → understanding divergent training runs</li>
+        </ul>
+      </div>
+      <div class="card c-orange">
+        <div class="card-icon">💡</div>
+        <div class="depth depth-core">Optics</div>
+        <div class="card-title">Photonic AI (Frontier)</div>
+        <ul>
+          <li>Optical computing — photonic matrix multipliers</li>
+          <li>Light-based inference chips (Lightmatter, photonics startups)</li>
+          <li>Diffraction — direct analogy to attention mechanisms in optics</li>
+          <li>Laser precision — relevance to neuromorphic hardware design</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05: AI ARCHITECTURE KNOWLEDGE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">AI Architecture Knowledge (The Core of the Role)</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="grid-2">
+      <div class="card c-red">
+        <div class="card-icon">🧠</div>
+        <div class="depth depth-hard">Deep Knowledge</div>
+        <div class="card-title">Transformer Internals</div>
+        <ul>
+          <li>Attention complexity O(n²) and all efficient variants — FlashAttention, MQA, GQA, SWA</li>
+          <li>KV-Cache design — memory layout, eviction strategies (H₂O, ScissorHands)</li>
+          <li>RoPE, ALiBi, NoPE — positional encoding design tradeoffs</li>
+          <li>Layer normalization variants — PreNorm, RMSNorm, QKNorm — stability implications</li>
+          <li>MoE routing — top-k gating, expert capacity, load balancing loss</li>
+        </ul>
+      </div>
+      <div class="card c-red">
+        <div class="card-icon">📐</div>
+        <div class="depth depth-mastery">Mastery</div>
+        <div class="card-title">Training System Design</div>
+        <ul>
+          <li>3D Parallelism — Data, Tensor, Pipeline parallel + sequence parallel</li>
+          <li>ZeRO stages 1/2/3 — optimizer/gradient/param sharding</li>
+          <li>Gradient accumulation, micro-batching strategies</li>
+          <li>Mixed precision — BF16 master weights, FP8 matmul, loss scaling</li>
+          <li>Distributed checkpointing — consistent state across 1000s of GPUs</li>
+        </ul>
+      </div>
+      <div class="card c-red">
+        <div class="card-icon">🔧</div>
+        <div class="depth depth-deep">Required</div>
+        <div class="card-title">Inference Optimization</div>
+        <ul>
+          <li>Speculative decoding — draft-verify for 3-4x throughput gains</li>
+          <li>Quantization — GPTQ, AWQ, SmoothQuant, FP8 calibration</li>
+          <li>Continuous batching — PagedAttention (vLLM architecture)</li>
+          <li>Tensor parallelism in inference — Megatron-LM serving patterns</li>
+          <li>Compiler optimization — TorchCompile, XLA, TensorRT-LLM</li>
+        </ul>
+      </div>
+      <div class="card c-red">
+        <div class="card-icon">🎯</div>
+        <div class="depth depth-hard">Frontier</div>
+        <div class="card-title">Beyond Transformers</div>
+        <ul>
+          <li>State Space Models — Mamba, RWKV, linear attention variants</li>
+          <li>Diffusion model architectures — DDPM, flow matching, consistency models</li>
+          <li>Neural Architecture Search — DARTS, EfficientNet scaling laws</li>
+          <li>Scaling laws — Chinchilla, compute-optimal training from first principles</li>
+          <li>Mechanistic interpretability — circuits, superposition, feature decomposition</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06: LEARNING PRIORITY STACK -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">Recommended Learning Priority Stack</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="stack">
+      <div class="stack-row">
+        <div class="stack-num">1</div>
+        <div class="stack-content">
+          <div class="stack-title">Linear Algebra + Calculus — Deep, Not Surface</div>
+          <div class="stack-desc">Re-learn LA through Strang's MIT lectures and Axler's "LADR". Go beyond "matrices = weights" — internalize SVD, eigenspaces, and tensor operations. You'll use this every single day. For calculus, really understand Jacobians and the chain rule mechanistically — this IS backpropagation.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num">2</div>
+        <div class="stack-content">
+          <div class="stack-title">Probability, Statistics & Information Theory Together</div>
+          <div class="stack-desc">Study these concurrently. Blitzstein's probability book + Cover & Thomas "Elements of Information Theory". Understanding KL divergence, cross-entropy, and ELBO at a deep level unlocks VAEs, diffusion models, RLHF reward modeling, and loss function design from first principles.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num">3</div>
+        <div class="stack-content">
+          <div class="stack-title">Systems Programming — C++, CUDA, Memory Model</div>
+          <div class="stack-desc">Pick up "Programming Massively Parallel Processors" (Kirk & Hwu). Write actual CUDA kernels — a naive matmul, then an optimized tiled one. Understand cache utilization. This separates researchers from engineers who can actually ship fast models.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num">4</div>
+        <div class="stack-content">
+          <div class="stack-title">DSA With AI Context — Not Just LeetCode</div>
+          <div class="stack-desc">Study DSA but always ask: "where does this show up in an ML system?" Dynamic programming in CTC decoding, graph traversal in AutoML, HNSW graphs for vector databases. Read the vLLM, FlashAttention, and Megatron-LM source code to see DSA in production AI.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num">5</div>
+        <div class="stack-content">
+          <div class="stack-title">Optimization Theory + Numerical Methods</div>
+          <div class="stack-desc">Boyd & Vandenberghe "Convex Optimization" is the bible. Understand why Adam works via adaptive curvature, why loss landscapes are non-convex but still trainable, and how numerical precision affects training at scale. This makes you dangerous when debugging training instabilities.</div>
+        </div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num">6</div>
+        <div class="stack-content">
+          <div class="stack-title">Physics — Statistical Mechanics + Signal Processing</div>
+          <div class="stack-desc">Feynman lectures on statistical mechanics + Oppenheim's signal processing. The Boltzmann/softmax connection is not superficial — it gives you a physical intuition for why temperature scaling in LLMs works, and why certain loss landscapes resemble energy landscapes in physics.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07: WHAT SEPARATES TIERS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <span class="section-title">What Separates Tier Levels</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="grid-3">
+      <div class="card c-green">
+        <div class="card-title">ML Engineer (Mid-level)</div>
+        <ul>
+          <li>Fine-tunes pre-trained models</li>
+          <li>Basic LA, calculus, probability</li>
+          <li>Uses PyTorch APIs, Hugging Face</li>
+          <li>Knows Transformer theory at paper level</li>
+          <li>Data pipelines, evaluation loops</li>
+        </ul>
+      </div>
+      <div class="card c-orange">
+        <div class="card-title">AI Systems Engineer (Senior)</div>
+        <ul>
+          <li>Writes custom kernels & optimizations</li>
+          <li>Deep LA + optimization + numerics</li>
+          <li>Multi-GPU training infrastructure</li>
+          <li>Understands FlashAttention internals</li>
+          <li>System-level performance profiling</li>
+        </ul>
+      </div>
+      <div class="card c-red">
+        <div class="card-title">High-End AI System Designer</div>
+        <ul>
+          <li>Designs novel architectures from scratch</li>
+          <li>Full math stack incl. geometry + measure theory</li>
+          <li>Hardware-software co-design thinking</li>
+          <li>Scaling laws from first principles</li>
+          <li>Cross-domain: physics + CS + math synthesis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08: RECOMMENDED RESOURCES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <span class="section-title">Canonical Resources</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <tr><th>Resource</th><th>Domain</th><th>Why Essential</th></tr>
+        <tr><td>Deep Learning (Goodfellow, Bengio, Courville)</td><td>Math + DL Theory</td><td>Still the most complete theoretical foundation</td></tr>
+        <tr><td>PMPP — Kirk & Hwu</td><td>CUDA / GPU Systems</td><td>The go-to for GPU programming from fundamentals</td></tr>
+        <tr><td>Boyd & Vandenberghe: Convex Optimization</td><td>Optimization</td><td>Free online, essential for loss landscape reasoning</td></tr>
+        <tr><td>Blitzstein & Hwang: Prob & Stats</td><td>Probability</td><td>Intuition-first, used by Harvard Stat 110</td></tr>
+        <tr><td>Cover & Thomas: Info Theory</td><td>Information Theory</td><td>Classic reference, directly maps to loss functions</td></tr>
+        <tr><td>Axler: Linear Algebra Done Right</td><td>Linear Algebra</td><td>Abstract perspective, not just computation</td></tr>
+        <tr><td>FlashAttention paper (Dao et al.)</td><td>Attention Systems</td><td>Read the code + paper. Real kernel engineering.</td></tr>
+        <tr><td>Megatron-LM / vLLM source code</td><td>Large-Scale Systems</td><td>Production-grade distributed training + inference</td></tr>
+        <tr><td>Feynman Lectures Vol. 1 (Stat Mech)</td><td>Physics</td><td>Best intuition builder for thermodynamic ML connections</td></tr>
+        <tr><td>CS 231n, CS 285 (Berkeley RL)</td><td>Vision + RL</td><td>Stanford/Berkeley courses, research-grade depth</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">PRAKASH // AI SYSTEM DESIGNER ROADMAP<br>COMPILED: 2025 — FOR RTX 4050 LOCAL AI RESEARCH</div>
+    <div class="footer-right">DEPTH INDEX: FULL STACK<br>NO SHORTCUTS. NO SURFACE LEVEL.</div>
+  </div>
+
+</div>
+</body>
+</html>
